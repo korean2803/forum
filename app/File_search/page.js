@@ -1,71 +1,52 @@
 "use client";
+
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function FileSearch() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [results, setResults] = useState([]);
-  const [loading, setLoading] = useState(false); // ✅ 로딩 상태 추가
-  const [error, setError] = useState(""); // ✅ 에러 메시지 상태 추가
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
-  const handleSearch = async (e) => {
-    e.preventDefault();
-
-    if (!searchQuery.trim()) { // ✅ 검색어가 비어있는 경우 방지
-      setError("검색어를 입력하세요.");
+  const handleSearch = async () => {
+    console.log("Search button clicked!"); // ✅ 버튼 클릭 확인
+  
+    const query = document.getElementById("search_input").value.trim();
+    if (!query) {
+      console.log("Empty search query"); // ✅ 빈 검색어 체크
+      alert("Please enter a search term.");
       return;
     }
-
-    setLoading(true);
-    setError(""); // 에러 초기화
-
+  
+    setLoading(true); // 로딩 시작
     try {
-      console.log(`📌 API 요청 실행: /api/search/search?q=${searchQuery}`);
-
-      const res = await fetch(`/api/search/search?q=${encodeURIComponent(searchQuery)}`);
-      const data = await res.json();
-
-      console.log("📌 검색 API 응답 데이터:", data);
-
-      if (res.ok) {
-        setResults(Array.isArray(data) ? data : []);
+      console.log(`Sending request to: /api/search/search?query=${encodeURIComponent(query)}`); // ✅ 요청 URL 확인
+  
+      const response = await fetch(`/api/search/search?query=${encodeURIComponent(query)}`);
+      const data = await response.json();
+  
+      console.log("Server Response:", data); // ✅ 서버 응답 확인
+  
+      if (response.ok) {
+        console.log(`Navigating to /personal-file/${data.id}`); // ✅ 이동 경로 확인
+        router.push(`/personal-file/${data.id}`);
       } else {
-        setError(data.message || "검색 중 오류가 발생했습니다.");
+        alert(`Error: ${data.error}`); // ✅ 서버에서 오류 응답이 왔을 때 메시지 표시
       }
     } catch (error) {
-      console.error("📌 검색 오류 발생:", error);
-      setError("서버 오류 발생.");
+      console.error("Error fetching search results:", error); // ✅ 실제 오류 출력
+      alert("An error occurred. Please try again.");
     } finally {
-      setLoading(false);
+      setLoading(false); // 로딩 종료
     }
   };
+  
 
   return (
-    <div className="p-10">
-      <h4>파일 검색</h4>
-      <form onSubmit={handleSearch}>
-        <input
-          type="text"
-          placeholder="이름 또는 키워드 입력"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
-        <button type="submit">검색</button>
-      </form>
-
-      {loading && <p>검색 중...</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
-
-      <ul>
-        {results.length > 0 ? (
-          results.map((item) => (
-            <li key={item._id}>
-              <a href={`/file/${item._id}`}>{item.name} - {item.evidence_id}</a>
-            </li>
-          ))
-        ) : (
-          <p>검색 결과가 없습니다.</p>
-        )}
-      </ul>
+    <div className="search_container">
+      <input className="search_box" type="text" placeholder="Search file" id="search_input" />
+      <button className="search_button" onClick={handleSearch} disabled={loading}>
+        {loading ? "Searching..." : "Search"}
+      </button>
     </div>
   );
 }

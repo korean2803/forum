@@ -9,8 +9,8 @@ export default async function Home() {
   console.log(result)
 
   return (
-    <div> 
-      아아
+    <div className = "p-20"> 
+      <h1 className = "home">경찰청 Database</h1>
     </div>
   )
 }

@@ -2,7 +2,7 @@ import { connectDB } from "@/util/database";
 import { ObjectId } from "mongodb";
 
 export default async function PersonalFile({ params }) {
-  const { id } = params; // URL에서 ID 가져오기
+  const { id } = await params; // URL에서 ID 가져오기
   let personData = null;
 
   try {
@@ -21,11 +21,25 @@ export default async function PersonalFile({ params }) {
   }
 
   return (
-    <div>
-      <h1>📂 Personal File: {personData.name}</h1>
-      <p>👤 이름: {personData.name}</p>
-      <p>🩸 성별: {personData.sex}</p>
+    <div class="file_card">
+      <div class="file header">
+        <div class="file_info">
+         <h1>📂 Personal File: {personData.name}</h1>
+         <p>👤 이름: {personData.name}</p>
+         <p>🩸 성별: {personData.sex}</p>
       {/* 필요한 추가 데이터가 있으면 더 표시 가능 */}
-    </div>
+        </div>
+      </div>
+      <div class="file_details">
+        <p>출생일: 1980년 5월 10일</p>
+        <p>키: 175cm</p>
+        <p>눈 색깔: 갈색</p>
+        <p>추가 정보: ...</p>
+      </div>
+   </div>
+
+
+
+  
   );
 }

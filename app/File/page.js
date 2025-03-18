@@ -31,7 +31,7 @@ export default function File_create() {
     };
   
     try {
-      const response = await fetch("/api/post/new", {  // ✅ API 경로 수정됨!
+      const response = await fetch("/api/post/game_data", {  // ✅ API 경로 수정됨!
         method: "POST",
         headers: {
           "Content-Type": "application/json"

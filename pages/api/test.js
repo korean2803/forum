@@ -15,4 +15,8 @@ export default async function handler(req, res) {
             res.status(200).json(new Date());
            }       
     }
+    //DELETE 요청 추가
+    else if (req.method ==='DELETE') {
+
+    }
 }
